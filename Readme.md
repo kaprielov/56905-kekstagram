@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Антон Каприелов](https://up.htmlacademy.ru/javascript/10/user/56905).
-* Наставник: `Леонид Лебедев`(https://htmlacademy.ru/profile/id67135).
+* Наставник: [Леонид Лебедев](https://htmlacademy.ru/profile/id67135).
 
 ---
 
