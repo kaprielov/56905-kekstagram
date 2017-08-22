@@ -7,7 +7,7 @@ var likesMin = 15;
 var fragment = document.createDocumentFragment();
 var pictureContainer = document.querySelector('.pictures');
 var pictureTemplate = document.querySelector('#picture-template').content.querySelector('.picture');
-
+var pictureTemplateClone;
 var uploadOverlay = document.querySelector('.upload-overlay');
 var galleryOverlay = document.querySelector('.gallery-overlay');
 
@@ -20,21 +20,23 @@ var getCards = function () {
     pictures[i] = {'url': 'photos/' + (i + 1) + '.jpg', 'likes': getRandomArbitrary(likesMin, likesMax), 'comment': comments[getRandomArbitrary(0, comments.length - 1)]};
   }
 }
-var domGen = function () {
+var domGen = function (i) {
+  pictureTemplateClone = pictureTemplate.cloneNode(true);
+  pictureTemplateClone.querySelector('img').setAttribute('src', pictures[i].url);
+  pictureTemplateClone.querySelector('.picture-likes').insertAdjacentText('afterbegin', pictures[i].likes);
+  pictureTemplateClone.querySelector('.picture-comments').insertAdjacentText('afterbegin', pictures[i].comment);
+}
+
+var test = function () {
+  getCards();
   for (var i = 0; i <= 25; i++) {
-    var pictureTemplateClone = pictureTemplate.cloneNode(true);
-    var pictureTemplateImg = pictureTemplateClone.querySelector('img');
-    var pictureTemplateLikes = pictureTemplateClone.querySelector('.picture-likes');
-    var pictureTemplateComments = pictureTemplateClone.querySelector('.picture-comments');
-    pictureTemplateImg.setAttribute('src', pictures[i].url);
-    pictureTemplateLikes.insertAdjacentText('afterbegin', pictures[i].likes);
-    pictureTemplateComments.insertAdjacentText('afterbegin', pictures[i].comment);
+    domGen(i);
     fragment.appendChild(pictureTemplateClone);
   }
+  pictureContainer.appendChild(fragment);
 }
-getCards();
-domGen();
-pictureContainer.appendChild(fragment);
+
+test();
 // uploadOverlay.classList.add('hidden');
 //
 // galleryOverlay.classList.remove('hidden');
