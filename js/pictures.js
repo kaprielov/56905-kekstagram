@@ -33,32 +33,34 @@ var getCardsArray = function () {
   return pictures;
 };
 
-var getPictureTemplate = function (i) {
+var getPictureTemplate = function (card) {
   var pictureTemplateClone = document.querySelector('#picture-template').content.cloneNode(true);
-  pictureTemplateClone.querySelector('img').setAttribute('src', getCardsArray()[i].url);
-  pictureTemplateClone.querySelector('.picture-likes').textContent = getCardsArray()[i].likes;
-  pictureTemplateClone.querySelector('.picture-comments').textContent = getCardsArray()[i].comments.length;
+  pictureTemplateClone.querySelector('img').setAttribute('src', card.url);
+  pictureTemplateClone.querySelector('.picture-likes').textContent = card.likes;
+  pictureTemplateClone.querySelector('.picture-comments').textContent = card.comments.length;
   return pictureTemplateClone;
 };
 
 var renderPictureTemplate = function () {
-  var pictureTemplate = document.createDocumentFragment();
+  var fragment = document.createDocumentFragment();
+  var cards = getCardsArray();
   var pictureContainer = document.querySelector('.pictures');
-  for (var i = 0; i <= NUMBER_OF_PHOTOS; i++) {
-    pictureTemplate.appendChild(getPictureTemplate(i));
+  for (var i = 0; i < cards.length; i++) {
+    fragment.appendChild(getPictureTemplate(cards[i]));
   }
-  pictureContainer.appendChild(pictureTemplate);
+  pictureContainer.appendChild(fragment);
 };
 
 var openOverlay = function () {
+  var cards = getCardsArray();
   var uploadOverlay = document.querySelector('.upload-overlay');
   uploadOverlay.classList.add('hidden');
   var galleryOverlay = document.querySelector('.gallery-overlay');
   galleryOverlay.classList.remove('hidden');
-  galleryOverlay.querySelector('.gallery-overlay-image').setAttribute('src', getCardsArray()[0].url);
-  galleryOverlay.querySelector('.likes-count').textContent = getCardsArray()[0].likes;
-  galleryOverlay.querySelector('.comments-count').textContent = getCardsArray()[0].comments.length;
+  galleryOverlay.querySelector('.gallery-overlay-image').setAttribute('src', cards[0].url);
+  galleryOverlay.querySelector('.likes-count').textContent = cards[0].likes;
+  galleryOverlay.querySelector('.comments-count').textContent = cards[0].comments.length;
 };
 
-// openOverlay();
+openOverlay();
 renderPictureTemplate();
