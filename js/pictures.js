@@ -4,7 +4,6 @@ var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. 
 var LIKES_MAX = 256;
 var LIKES_MIN = 15;
 var NUMBER_OF_PHOTOS = 25;
-var FRAGMENT = document.createDocumentFragment();
 
 function getRandomValueFromRange(min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -13,19 +12,22 @@ function getRandomValueFromRange(min, max) {
 var getRandomComments = function (min, max) {
   var commetnsIndividual = [];
   for (var i = 0; i <= getRandomValueFromRange(min, max); i++) {
-    commetnsIndividual.push(COMMENTS[getRandomValueFromRange(max, COMMENTS.length - 1)]);
+    commetnsIndividual.push(COMMENTS[getRandomValueFromRange(0, COMMENTS.length - 1)]);
   }
   return commetnsIndividual;
 };
 
 var genCard = function (i) {
-  return {'url': 'photos/' + (i + 1) + '.jpg', 'likes': getRandomValueFromRange(LIKES_MAX, LIKES_MIN), 'comments': getRandomComments(0, 1)};
+  return {
+    url: 'photos/' + (i + 1) + '.jpg',
+    likes: getRandomValueFromRange(LIKES_MAX, LIKES_MIN),
+    comments: getRandomComments(0, 1),
+  };
 };
 
 var getCardsArray = function () {
   var pictures = [];
   for (var i = 0; i <= NUMBER_OF_PHOTOS; i++) {
-    genCard(i);
     pictures.push(genCard(i));
   }
   return pictures;
@@ -36,16 +38,16 @@ var getPictureTemplate = function (i) {
   pictureTemplateClone.querySelector('img').setAttribute('src', getCardsArray()[i].url);
   pictureTemplateClone.querySelector('.picture-likes').textContent = getCardsArray()[i].likes;
   pictureTemplateClone.querySelector('.picture-comments').textContent = getCardsArray()[i].comments.length;
-  FRAGMENT.appendChild(pictureTemplateClone);
+  return pictureTemplateClone;
 };
 
 var renderPictureTemplate = function () {
-  getCardsArray();
-  for (var i = 0; i <= NUMBER_OF_PHOTOS; i++) {
-    getPictureTemplate(i);
-  }
+  var pictureTemplate = document.createDocumentFragment();
   var pictureContainer = document.querySelector('.pictures');
-  pictureContainer.appendChild(FRAGMENT);
+  for (var i = 0; i <= NUMBER_OF_PHOTOS; i++) {
+    pictureTemplate.appendChild(getPictureTemplate(i));
+  }
+  pictureContainer.appendChild(pictureTemplate);
 };
 
 var openOverlay = function () {
@@ -58,5 +60,5 @@ var openOverlay = function () {
   galleryOverlay.querySelector('.comments-count').textContent = getCardsArray()[0].comments.length;
 };
 
-openOverlay();
+// openOverlay();
 renderPictureTemplate();
