@@ -68,8 +68,7 @@ var openGalleryOverlay = function () {
 };
 
 var closeGalleryOverlay = function () {
-  var galleryOverlay = document.querySelector('.gallery-overlay');
-  galleryOverlay.classList.add('hidden');
+  document.querySelector('.gallery-overlay').classList.add('hidden');
   document.removeEventListener('keydown', onGalleryOverlayEsc);
   document.querySelector('.gallery-overlay-close').removeEventListener('keydown', onOverlayCloseKeydown);
 };
@@ -82,7 +81,7 @@ var onGalleryOverlayEsc = function () {
 
 var onPictureClick = function (event) {
   var target = event.target;
-  while (target !== document.querySelector('.pictures')) {
+  while (target !== document.querySelector('.picture')) {
     if (target.className === 'picture') {
       event.preventDefault();
       openGalleryOverlay();
@@ -92,9 +91,6 @@ var onPictureClick = function (event) {
   }
 };
 
-var onOverlayCloseClick = function () {
-  closeGalleryOverlay();
-};
 
 var onOverlayCloseKeydown = function () {
   if (event.keyCode === ENTER_KEYCODE) {
@@ -103,7 +99,9 @@ var onOverlayCloseKeydown = function () {
 };
 
 document.querySelector('.pictures').addEventListener('click', onPictureClick);
-document.querySelector('.gallery-overlay-close').addEventListener('click', onOverlayCloseClick);
+document.querySelector('.gallery-overlay-close').addEventListener('click', function () {
+  closeGalleryOverlay();
+});
 
 
 renderPictureTemplate();
