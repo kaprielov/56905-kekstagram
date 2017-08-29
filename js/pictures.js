@@ -81,7 +81,7 @@ var onGalleryOverlayEsc = function () {
 
 var onPictureClick = function (event) {
   var target = event.target;
-  while (target !== document.querySelector('.picture')) {
+  while (target.className !== 'pictures') {
     if (target.className === 'picture') {
       event.preventDefault();
       openGalleryOverlay();
