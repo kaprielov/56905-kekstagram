@@ -7,6 +7,8 @@ var NUMBER_OF_PHOTOS = 25;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
+// Отрисовка шаблона
+
 function getRandomValueFromRange(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
@@ -52,6 +54,10 @@ var renderPictureTemplate = function () {
   }
   pictureContainer.appendChild(fragment);
 };
+
+renderPictureTemplate();
+
+// Галерея
 
 var getGalleryOverlay = function (target) {
   var galleryOverlay = document.querySelector('.gallery-overlay');
@@ -103,5 +109,60 @@ document.querySelector('.gallery-overlay-close').addEventListener('click', funct
   closeGalleryOverlay();
 });
 
+// Загрузчик
 
-renderPictureTemplate();
+var closeUploadOverlay = function () {
+  document.querySelector('.upload-overlay').classList.add('hidden');
+  document.removeEventListener('keydown', onUploadOverlayEsc);
+  document.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
+  document.querySelector('.upload-form-cancel').removeEventListener('click', function () {
+    closeUploadOverlay();
+  });
+};
+
+var showUploadOverlay = function () {
+  document.querySelector('.upload-overlay').classList.remove('hidden');
+  commentInputFocus();
+  document.addEventListener('keydown', onUploadOverlayEsc);
+  document.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
+  document.querySelector('.upload-form-cancel').addEventListener('click', function () {
+    closeUploadOverlay();
+  });
+};
+
+var onUploadCancelKeydown = function () {
+  if (event.keyCode === ENTER_KEYCODE) {
+    closeUploadOverlay();
+  }
+};
+
+document.querySelector('#upload-file').onchange = function () {
+  showUploadOverlay();
+};
+
+var commentInputFocus = function () {
+  var commentInput = document.querySelector('.upload-form-description');
+  commentInput.onfocus = function () {
+    commentInput.classList.add('focus');
+  };
+  commentInput.onblur = function () {
+    commentInput.classList.remove('focus');
+  };
+};
+
+var onUploadOverlayEsc = function () {
+  var commentInput = document.querySelector('.upload-form-description');
+  if (event.keyCode === ESC_KEYCODE && commentInput.classList.contains('focus') !== true) {
+    closeUploadOverlay();
+  }
+};
+
+// upload-resize-controls
+
+// var uploadResizeControls = function () {
+  document.querySelector('.upload-resize-controls-button-dec').addEventListener('click', function () {
+    var resizeValue = document.querySelector('.upload-resize-controls-value').getAttribute('value');
+    var test = parseInt(resizeValue);
+    document.querySelector('.upload-resize-controls-value').setAttribute('value', test - 25 + '%');
+  });
+// };
