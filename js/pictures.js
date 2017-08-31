@@ -70,12 +70,14 @@ var openGalleryOverlay = function () {
   var galleryOverlay = document.querySelector('.gallery-overlay');
   galleryOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onGalleryOverlayEsc);
-  document.querySelector('.gallery-overlay-close').addEventListener('keydown', onOverlayCloseKeydown);
+  document.querySelector('.gallery-overlay-close').addEventListener('click', closeGalleryOverlay);
+  galleryOverlay.querySelector('.gallery-overlay-close').addEventListener('keydown', onOverlayCloseKeydown);
 };
 
 var closeGalleryOverlay = function () {
   document.querySelector('.gallery-overlay').classList.add('hidden');
   document.removeEventListener('keydown', onGalleryOverlayEsc);
+  document.querySelector('.gallery-overlay-close').removeEventListener('click', closeGalleryOverlay);
   document.querySelector('.gallery-overlay-close').removeEventListener('keydown', onOverlayCloseKeydown);
 };
 
@@ -87,7 +89,7 @@ var onGalleryOverlayEsc = function () {
 
 var onPictureClick = function (event) {
   var target = event.target;
-  while (target !== document.querySelector('.picture')) {
+  while (!target.classList.contains('pictures')) {
     if (target.className === 'picture') {
       event.preventDefault();
       openGalleryOverlay();
@@ -97,7 +99,6 @@ var onPictureClick = function (event) {
   }
 };
 
-
 var onOverlayCloseKeydown = function () {
   if (event.keyCode === ENTER_KEYCODE) {
     closeGalleryOverlay();
@@ -105,9 +106,7 @@ var onOverlayCloseKeydown = function () {
 };
 
 document.querySelector('.pictures').addEventListener('click', onPictureClick);
-document.querySelector('.gallery-overlay-close').addEventListener('click', function () {
-  closeGalleryOverlay();
-});
+
 
 // Загрузчик
 
@@ -118,6 +117,7 @@ var closeUploadOverlay = function () {
   document.querySelector('.upload-form-cancel').removeEventListener('click', function () {
     closeUploadOverlay();
   });
+  document.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
 };
 
 var showUploadOverlay = function () {
@@ -128,6 +128,8 @@ var showUploadOverlay = function () {
   document.querySelector('.upload-form-cancel').addEventListener('click', function () {
     closeUploadOverlay();
   });
+  document.querySelector('.upload-resize-controls-value').setAttribute('value', 50 + '%');
+  document.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
 };
 
 var onUploadCancelKeydown = function () {
@@ -157,12 +159,13 @@ var onUploadOverlayEsc = function () {
   }
 };
 
-// upload-resize-controls
-
-// var uploadResizeControls = function () {
-  document.querySelector('.upload-resize-controls-button-dec').addEventListener('click', function () {
-    var resizeValue = document.querySelector('.upload-resize-controls-value').getAttribute('value');
-    var test = parseInt(resizeValue);
-    document.querySelector('.upload-resize-controls-value').setAttribute('value', test - 25 + '%');
-  });
-// };
+var uploadResizeControls = function (event) {
+  var target = event.target;
+  var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+  if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
+    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute - 25 + '%');
+  }
+  if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
+    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
+  }
+};
