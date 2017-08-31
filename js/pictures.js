@@ -4,6 +4,8 @@ var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. 
 var LIKES_MAX = 256;
 var LIKES_MIN = 15;
 var NUMBER_OF_PHOTOS = 25;
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
 function getRandomValueFromRange(min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -51,16 +53,52 @@ var renderPictureTemplate = function () {
   pictureContainer.appendChild(fragment);
 };
 
-var openOverlay = function () {
-  var cards = getCardsArray();
-  var uploadOverlay = document.querySelector('.upload-overlay');
-  uploadOverlay.classList.add('hidden');
+var getGalleryOverlay = function (target) {
   var galleryOverlay = document.querySelector('.gallery-overlay');
-  galleryOverlay.classList.remove('hidden');
-  galleryOverlay.querySelector('.gallery-overlay-image').setAttribute('src', cards[0].url);
-  galleryOverlay.querySelector('.likes-count').textContent = cards[0].likes;
-  galleryOverlay.querySelector('.comments-count').textContent = cards[0].comments.length;
+  galleryOverlay.querySelector('.gallery-overlay-image').setAttribute('src', target.querySelector('img').getAttribute('src'));
+  galleryOverlay.querySelector('.likes-count').textContent = target.querySelector('.picture-likes').textContent;
+  galleryOverlay.querySelector('.comments-count').textContent = target.querySelector('.picture-comments').textContent;
 };
 
-openOverlay();
+var openGalleryOverlay = function () {
+  var galleryOverlay = document.querySelector('.gallery-overlay');
+  galleryOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onGalleryOverlayEsc);
+  document.querySelector('.gallery-overlay-close').addEventListener('click', closeGalleryOverlay);
+  galleryOverlay.querySelector('.gallery-overlay-close').addEventListener('keydown', onOverlayCloseKeydown);
+};
+
+var closeGalleryOverlay = function () {
+  document.querySelector('.gallery-overlay').classList.add('hidden');
+  document.removeEventListener('keydown', onGalleryOverlayEsc);
+  document.querySelector('.gallery-overlay-close').removeEventListener('click', closeGalleryOverlay);
+  document.querySelector('.gallery-overlay-close').removeEventListener('keydown', onOverlayCloseKeydown);
+};
+
+var onGalleryOverlayEsc = function () {
+  if (event.keyCode === ESC_KEYCODE) {
+    closeGalleryOverlay();
+  }
+};
+
+var onPictureClick = function (event) {
+  var target = event.target;
+  while (!target.classList.contains('pictures')) {
+    if (target.className === 'picture') {
+      event.preventDefault();
+      openGalleryOverlay();
+      getGalleryOverlay(target);
+    }
+    target = target.parentNode;
+  }
+};
+
+var onOverlayCloseKeydown = function () {
+  if (event.keyCode === ENTER_KEYCODE) {
+    closeGalleryOverlay();
+  }
+};
+
+document.querySelector('.pictures').addEventListener('click', onPictureClick);
+
 renderPictureTemplate();
