@@ -118,6 +118,7 @@ var closeUploadOverlay = function () {
     closeUploadOverlay();
   });
   document.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
+  document.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
 };
 
 var showUploadOverlay = function () {
@@ -128,8 +129,9 @@ var showUploadOverlay = function () {
   document.querySelector('.upload-form-cancel').addEventListener('click', function () {
     closeUploadOverlay();
   });
-  document.querySelector('.upload-resize-controls-value').setAttribute('value', 50 + '%');
+  document.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
   document.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
+  document.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
 };
 
 var onUploadCancelKeydown = function () {
@@ -167,5 +169,17 @@ var uploadResizeControls = function (event) {
   }
   if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
     document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
+  }
+};
+
+var uploadEffectControls = function (event) {
+  var target = event.target;
+  while (!target.classList.contains('upload-effect-controls')) {
+    if (target.classList.contains('upload-effect-label')) {
+      var effect = target.getAttribute('for');
+      document.querySelector('.effect-image-preview').classList.remove(effect);
+      document.querySelector('.effect-image-preview').classList.add(effect.replace(/upload-/g, ''));
+    }
+    target = target.parentNode;
   }
 };
