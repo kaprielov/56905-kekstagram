@@ -175,9 +175,9 @@ var uploadEffectControls = function (event) {
   var target = event.target;
   while (!target.classList.contains('upload-effect-controls')) {
     if (target.classList.contains('upload-effect-label')) {
-      var effect = target.getAttribute('for');
+      var effect = target.getAttribute('for').replace(/upload-/g, '');
       document.querySelector('.effect-image-preview').classList.remove(effect);
-      document.querySelector('.effect-image-preview').classList.add(effect.replace(/upload-/g, ''));
+      document.querySelector('.effect-image-preview').classList.add(effect);
     }
     target = target.parentNode;
   }

@@ -25,6 +25,7 @@
 </form>
 
 <form class="upload-form" id="upload-select-image" method="post"
+      action="https://1510.dump.academy/kekstagram"
       enctype="multipart/form-data"
       autocomplete="off">
   <div class="upload-image">
@@ -96,9 +97,9 @@
 
       <input class="upload-form-hashtags" name="hashtags" placeholder="#хэш-тег">
 
-      <textarea required class="upload-form-description" name="description" placeholder="Ваш комментарий..."></textarea>
-
-      <button class="upload-form-cancel" type="reset" id="upload-cancel"></button>
+      <textarea required minlength="30" maxlength="100" class="upload-form-description" name="description" placeholder="Ваш комментарий..."></textarea>
+      <!-- Не очень понял, зачем она скрыта ? нужно уточнение -->
+      <div class="upload-form-cancel" style="left: 90%" type="reset" id="upload-cancel" tabindex="0"></div>
       <button class="upload-form-submit" type="submit" id="upload-submit">Отправить</button>
     </div>
   </div>
