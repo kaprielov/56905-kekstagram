@@ -7,6 +7,8 @@ var NUMBER_OF_PHOTOS = 25;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
+// Отрисовка шаблона
+
 function getRandomValueFromRange(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
@@ -52,6 +54,10 @@ var renderPictureTemplate = function () {
   }
   pictureContainer.appendChild(fragment);
 };
+
+renderPictureTemplate();
+
+// Галерея
 
 var getGalleryOverlay = function (target) {
   var galleryOverlay = document.querySelector('.gallery-overlay');
@@ -101,4 +107,79 @@ var onOverlayCloseKeydown = function () {
 
 document.querySelector('.pictures').addEventListener('click', onPictureClick);
 
-renderPictureTemplate();
+// Загрузчик
+
+var closeUploadOverlay = function () {
+  document.querySelector('.upload-overlay').classList.add('hidden');
+  document.removeEventListener('keydown', onUploadOverlayEsc);
+  document.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
+  document.querySelector('.upload-form-cancel').removeEventListener('click', function () {
+    closeUploadOverlay();
+  });
+  document.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
+  document.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
+};
+
+var showUploadOverlay = function () {
+  document.querySelector('.upload-overlay').classList.remove('hidden');
+  commentInputFocus();
+  document.addEventListener('keydown', onUploadOverlayEsc);
+  document.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
+  document.querySelector('.upload-form-cancel').addEventListener('click', function () {
+    closeUploadOverlay();
+  });
+  document.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
+  document.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
+  document.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
+};
+
+var onUploadCancelKeydown = function () {
+  if (event.keyCode === ENTER_KEYCODE) {
+    closeUploadOverlay();
+  }
+};
+
+document.querySelector('#upload-file').onchange = function () {
+  showUploadOverlay();
+};
+
+var commentInputFocus = function () {
+  var commentInput = document.querySelector('.upload-form-description');
+  commentInput.onfocus = function () {
+    commentInput.classList.add('focus');
+  };
+  commentInput.onblur = function () {
+    commentInput.classList.remove('focus');
+  };
+};
+
+var onUploadOverlayEsc = function () {
+  var commentInput = document.querySelector('.upload-form-description');
+  if (event.keyCode === ESC_KEYCODE && commentInput.classList.contains('focus') !== true) {
+    closeUploadOverlay();
+  }
+};
+
+var uploadResizeControls = function (event) {
+  var target = event.target;
+  var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+  if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
+    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute - 25 + '%');
+  }
+  if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
+    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
+  }
+};
+
+var uploadEffectControls = function (event) {
+  var target = event.target;
+  while (!target.classList.contains('upload-effect-controls')) {
+    if (target.classList.contains('upload-effect-label')) {
+      var effect = target.getAttribute('for');
+      document.querySelector('.effect-image-preview').classList.remove(effect);
+      document.querySelector('.effect-image-preview').classList.add(effect.replace(/upload-/g, ''));
+    }
+    target = target.parentNode;
+  }
+};
+
