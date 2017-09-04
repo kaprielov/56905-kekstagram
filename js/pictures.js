@@ -162,16 +162,16 @@ var onUploadOverlayEsc = function () {
 
 var uploadResizeControls = function (event) {
   var target = event.target;
-  var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+  var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
   var image = document.querySelector('.effect-image-preview');
   if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
     document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute - 25 + '%');
-    var decResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+    var decResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
     image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
   }
   if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
     document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
-    var incResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+    var incResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
     if (incResizeValueAttribute === 100) {
       image.setAttribute('style', 'transform: scale(1)');
     } else {
