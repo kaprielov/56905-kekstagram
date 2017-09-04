@@ -163,23 +163,36 @@ var onUploadOverlayEsc = function () {
 var uploadResizeControls = function (event) {
   var target = event.target;
   var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+  var image = document.querySelector('.effect-image-preview');
   if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
     document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute - 25 + '%');
+    var decResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+    image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
   }
   if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
     document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
+    var incResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'));
+    if (incResizeValueAttribute === 100) {
+      image.setAttribute('style', 'transform: scale(1)');
+    } else {
+      image.setAttribute('style', 'transform: scale(0.' + incResizeValueAttribute + ')');
+    }
   }
 };
 
 var uploadEffectControls = function (event) {
   var target = event.target;
+  var image = document.querySelector('.effect-image-preview');
+  var imageNames = image.className;
+  var arr = imageNames.split(' ');
   while (!target.classList.contains('upload-effect-controls')) {
     if (target.classList.contains('upload-effect-label')) {
-      var effect = target.getAttribute('for').replace(/upload-/g, '');
-      document.querySelector('.effect-image-preview').classList.remove(effect);
-      document.querySelector('.effect-image-preview').classList.add(effect);
+      var effect = target.getAttribute('for').replace(/upload-/, '');
+      if (arr.length > 1) {
+        image.classList.remove(arr[1]);
+      }
+      image.classList.add(effect);
     }
     target = target.parentNode;
   }
 };
-
