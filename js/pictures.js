@@ -29,7 +29,7 @@ var genCard = function (i) {
   };
 };
 
-var getCardsArray = function () {
+var getCardsimageNamesArray = function () {
   var pictures = [];
   for (var i = 0; i <= NUMBER_OF_PHOTOS; i++) {
     pictures.push(genCard(i));
@@ -47,7 +47,7 @@ var getPictureTemplate = function (card) {
 
 var renderPictureTemplate = function () {
   var fragment = document.createDocumentFragment();
-  var cards = getCardsArray();
+  var cards = getCardsimageNamesArray();
   var pictureContainer = document.querySelector('.pictures');
   for (var i = 0; i < cards.length; i++) {
     fragment.appendChild(getPictureTemplate(cards[i]));
@@ -184,12 +184,12 @@ var uploadEffectControls = function (event) {
   var target = event.target;
   var image = document.querySelector('.effect-image-preview');
   var imageNames = image.className;
-  var arr = imageNames.split(' ');
+  var imageNamesArr = imageNames.split(' ');
   while (!target.classList.contains('upload-effect-controls')) {
     if (target.classList.contains('upload-effect-label')) {
       var effect = target.getAttribute('for').replace(/upload-/, '');
-      if (arr.length > 1) {
-        image.classList.remove(arr[1]);
+      if (imageNamesArr.length > 1) {
+        image.classList.remove(imageNamesArr[1]);
       }
       image.classList.add(effect);
     }
