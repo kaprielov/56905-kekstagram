@@ -118,6 +118,7 @@ var closeUploadOverlay = function () {
   });
   document.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
   document.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
+  document.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
 };
 
 var showUploadOverlay = function () {
@@ -131,6 +132,7 @@ var showUploadOverlay = function () {
   document.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
   document.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
   document.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
+  document.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
 };
 
 var onUploadCancelKeydown = function () {
@@ -194,5 +196,32 @@ var uploadEffectControls = function (event) {
       image.classList.add(effect);
     }
     target = target.parentNode;
+  }
+};
+
+var tagsInputValid = function (event) {
+  var target = event.target;
+  var arr = target.value.split(' ');
+  function checkSymbol(symbol) {
+    return symbol[0] === '#';
+  }
+  if (arr.every(checkSymbol)) {
+    target.setCustomValidity('');
+    for (var i = 0; i < arr.length; i++) {
+      for (var j = i + 1; j < arr.length; j++) {
+        if (arr[i] === arr[j]) {
+          target.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+        } else {
+          target.setCustomValidity('');
+          if (arr.length > 5 || arr[i].length > 20) {
+            target.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+          } else {
+            target.setCustomValidity('');
+          }
+        }
+      }
+    }
+  } else {
+    target.setCustomValidity('хэш-теги начинаются с символа `#` (решётка) и состоят из одного слова');
   }
 };
