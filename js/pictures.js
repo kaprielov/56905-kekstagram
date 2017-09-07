@@ -110,29 +110,26 @@ document.querySelector('.pictures').addEventListener('click', onPictureClick);
 // Загрузчик
 
 var closeUploadOverlay = function () {
-  document.querySelector('.upload-overlay').classList.add('hidden');
+  var uploadOverlay = document.querySelector('.upload-overlay');
+  uploadOverlay.classList.add('hidden');
   document.removeEventListener('keydown', onUploadOverlayEsc);
-  document.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
-  document.querySelector('.upload-form-cancel').removeEventListener('click', function () {
-    closeUploadOverlay();
-  });
-  document.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
-  document.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
-  document.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
+  uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
+  uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', onUploadOverlayClick);
+  uploadOverlay.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
+  uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
+  uploadOverlay.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
 };
 
 var showUploadOverlay = function () {
-  document.querySelector('.upload-overlay').classList.remove('hidden');
-  commentInputFocus();
+  var uploadOverlay = document.querySelector('.upload-overlay');
+  uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onUploadOverlayEsc);
-  document.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
-  document.querySelector('.upload-form-cancel').addEventListener('click', function () {
-    closeUploadOverlay();
-  });
-  document.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
-  document.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
-  document.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
-  document.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
+  uploadOverlay.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
+  uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', onUploadOverlayClick);
+  uploadOverlay.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
+  uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
+  uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
+  uploadOverlay.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
 };
 
 var onUploadCancelKeydown = function () {
@@ -141,39 +138,33 @@ var onUploadCancelKeydown = function () {
   }
 };
 
-document.querySelector('#upload-file').onchange = function () {
-  showUploadOverlay();
-};
-
-var commentInputFocus = function () {
-  var commentInput = document.querySelector('.upload-form-description');
-  commentInput.onfocus = function () {
-    commentInput.classList.add('focus');
-  };
-  commentInput.onblur = function () {
-    commentInput.classList.remove('focus');
-  };
-};
-
-var onUploadOverlayEsc = function () {
-  var commentInput = document.querySelector('.upload-form-description');
-  if (event.keyCode === ESC_KEYCODE && commentInput.classList.contains('focus') !== true) {
+var onUploadOverlayEsc = function (event) {
+  if (event.keyCode === ESC_KEYCODE && !event.target.classList.contains('upload-form-description')) {
     closeUploadOverlay();
   }
 };
 
+var onUploadOverlayClick = function () {
+  closeUploadOverlay();
+};
+
+document.querySelector('#upload-file').onchange = function () {
+  showUploadOverlay();
+};
+
 var uploadResizeControls = function (event) {
   var target = event.target;
+  var resizeValue = document.querySelector('.upload-resize-controls-value');
   var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
   var image = document.querySelector('.effect-image-preview');
   if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
-    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute - 25 + '%');
-    var decResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
+    resizeValue.setAttribute('value', resizeValueAttribute - 25 + '%');
+    var decResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
     image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
   }
   if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
-    document.querySelector('.upload-resize-controls-value').setAttribute('value', resizeValueAttribute + 25 + '%');
-    var incResizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
+    resizeValue.setAttribute('value', resizeValueAttribute + 25 + '%');
+    var incResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
     if (incResizeValueAttribute === 100) {
       image.setAttribute('style', 'transform: scale(1)');
     } else {
@@ -213,7 +204,7 @@ var tagsInputValid = function (event) {
           target.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
         } else {
           target.setCustomValidity('');
-          if (arr.length > 5 || arr[i].length > 20) {
+          if (arr.length > 5) {
             target.setCustomValidity('нельзя указать больше пяти хэш-тегов');
           } else {
             target.setCustomValidity('');
