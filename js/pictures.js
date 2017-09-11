@@ -115,8 +115,8 @@ var closeUploadOverlay = function () {
   document.removeEventListener('keydown', onUploadOverlayEsc);
   uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
   uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', onUploadOverlayClick);
-  uploadOverlay.querySelector('.upload-resize-controls-button-dec').removeEventListener('click', uploadResizeControls);
-  uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('click', uploadEffectControls);
+  uploadOverlay.querySelector('.upload-resize-controls').removeEventListener('click', uploadResizeControls);
+  uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('change', uploadEffectControls);
   uploadOverlay.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
 };
 
@@ -128,7 +128,7 @@ var showUploadOverlay = function () {
   uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', onUploadOverlayClick);
   uploadOverlay.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
   uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
-  uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', uploadEffectControls);
+  uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
   uploadOverlay.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
 };
 
@@ -154,65 +154,108 @@ document.querySelector('#upload-file').onchange = function () {
 
 var uploadResizeControls = function (event) {
   var target = event.target;
-  var resizeValue = document.querySelector('.upload-resize-controls-value');
-  var resizeValueAttribute = parseInt(document.querySelector('.upload-resize-controls-value').getAttribute('value'), 10);
-  var image = document.querySelector('.effect-image-preview');
-  if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > 25) {
-    resizeValue.setAttribute('value', resizeValueAttribute - 25 + '%');
-    var decResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
-    image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
+  if (target.tagName.toLowerCase() !== 'button') {
+    return;
   }
-  if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < 100) {
-    resizeValue.setAttribute('value', resizeValueAttribute + 25 + '%');
-    var incResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
-    if (incResizeValueAttribute === 100) {
-      image.setAttribute('style', 'transform: scale(1)');
-    } else {
-      image.setAttribute('style', 'transform: scale(0.' + incResizeValueAttribute + ')');
-    }
+  var resizeValue = event.currentTarget.querySelector('.upload-resize-controls-value');
+  var resizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
+  var image = document.querySelector('.effect-image-preview');
+  var step = 25;
+  var maxValue = 100;
+
+  if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > step) {
+    resizeDecClick(resizeValue, resizeValueAttribute, image, step, maxValue);
+  }
+  if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < maxValue) {
+    resizeIncClick(resizeValue, resizeValueAttribute, image, step, maxValue);
+  }
+};
+
+var resizeDecClick = function (resizeValue, resizeValueAttribute, image, step, maxValue) {
+  resizeValue.setAttribute('value', resizeValueAttribute - step + '%');
+  var decResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
+  image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
+};
+
+var resizeIncClick = function (resizeValue, resizeValueAttribute, image, step, maxValue) {
+  resizeValue.setAttribute('value', resizeValueAttribute + step + '%');
+  var incResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
+  if (incResizeValueAttribute === maxValue) {
+    image.setAttribute('style', 'transform: scale(1)');
+  } else {
+    image.setAttribute('style', 'transform: scale(0.' + incResizeValueAttribute + ')');
   }
 };
 
 var uploadEffectControls = function (event) {
   var target = event.target;
   var image = document.querySelector('.effect-image-preview');
-  var imageNames = image.className;
-  var imageNamesArr = imageNames.split(' ');
-  while (!target.classList.contains('upload-effect-controls')) {
-    if (target.classList.contains('upload-effect-label')) {
-      var effect = target.getAttribute('for').replace(/upload-/, '');
-      if (imageNamesArr.length > 1) {
-        image.classList.remove(imageNamesArr[1]);
-      }
-      image.classList.add(effect);
-    }
-    target = target.parentNode;
+  var effect = 'effect-' + target.value;
+  if (image.classList.length > 1) {
+    image.classList.remove(image.classList[1]);
   }
+  image.classList.add(effect);
 };
 
 var tagsInputValid = function (event) {
   var target = event.target;
-  var arr = target.value.split(' ');
-  function checkSymbol(symbol) {
-    return symbol[0] === '#';
+  var hashTags = target.value.trim().split(' ');
+  var maxTags = 5;
+  var maxSymbols = 20;
+
+  target.setCustomValidity('');
+
+  var isStartWithHash = function (tags) {
+    return tags.every(function (tag) {
+      return tag[0] === '#';
+    });
+  };
+
+  if (!isStartWithHash(hashTags)) {
+    target.setCustomValidity('хэш-теги начинаются с символа `#` (решётка) и состоят из одного слова');
   }
-  if (arr.every(checkSymbol)) {
-    target.setCustomValidity('');
-    for (var i = 0; i < arr.length; i++) {
-      for (var j = i + 1; j < arr.length; j++) {
-        if (arr[i] === arr[j]) {
-          target.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
-        } else {
-          target.setCustomValidity('');
-          if (arr.length > 5) {
-            target.setCustomValidity('нельзя указать больше пяти хэш-тегов');
-          } else {
-            target.setCustomValidity('');
-          }
+
+  var hasOneHash = function (tags) {
+    return tags.every(function (tag) {
+      var countHash = 0;
+      for (var i = 0; i < tag.length; i++) {
+        if (tag[i] === '#') {
+          countHash++;
+        }
+      }
+      return countHash === 1;
+    });
+  };
+
+  if (!hasOneHash(hashTags)) {
+    target.setCustomValidity('хэш-тег начинается с символа `#` (решётка) и состоит из одного слова');
+  }
+
+  var onluOneTagName = function (tags) {
+    for (var i = 0; i < tags.length; i++) {
+      for (var j = i + 1; j < tags.length; j++) {
+        if (tags[i] === tags[j]) {
+          return;
         }
       }
     }
-  } else {
-    target.setCustomValidity('хэш-теги начинаются с символа `#` (решётка) и состоят из одного слова');
+  };
+
+  if (onluOneTagName(hashTags)) {
+    target.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+  }
+
+  if (hashTags.length > maxTags) {
+    target.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+  }
+
+  var maxTagsSymbols = function (tags) {
+    return tags.every(function (tag) {
+      return tag.length > maxSymbols;
+    });
+  };
+
+  if (maxTagsSymbols(hashTags)) {
+    target.setCustomValidity('максимальная длина одного хэш-тега 20 символов');
   }
 };
