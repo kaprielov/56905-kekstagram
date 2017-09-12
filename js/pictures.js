@@ -228,20 +228,20 @@ var tagsInputValid = function (event) {
   };
 
   if (!hasOneHash(hashTags)) {
-    target.setCustomValidity('хэш-тег начинается с символа `#` (решётка) и состоит из одного слова');
+    target.setCustomValidity('хэш-теги разделяются пробелами');
   }
 
-  var onluOneTagName = function (tags) {
+  var hasDuplicates = function (tags) {
     for (var i = 0; i < tags.length; i++) {
       for (var j = i + 1; j < tags.length; j++) {
         if (tags[i] === tags[j]) {
-          return;
+          return true;
         }
       }
     }
   };
 
-  if (onluOneTagName(hashTags)) {
+  if (hasDuplicates(hashTags)) {
     target.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
   }
 
