@@ -234,11 +234,10 @@ var tagsInputValid = function (event) {
   var hasDuplicates = function (tags) {
     for (var i = 0; i < tags.length; i++) {
       for (var j = i + 1; j < tags.length; j++) {
-        if (tags[i] === tags[j]) {
-          return true;
-        }
+        return tags[i] === tags[j];
       }
     }
+    return false;
   };
 
   if (hasDuplicates(hashTags)) {
