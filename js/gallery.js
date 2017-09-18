@@ -1,7 +1,5 @@
 'use strict';
 (function () {
-  var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
 
 // Галерея
   var openGalleryOverlay = function () {
@@ -20,7 +18,7 @@
   };
 
   var onGalleryOverlayEsc = function () {
-    if (event.keyCode === ESC_KEYCODE) {
+    if (event.keyCode === window.CONSTANTS.ESC_KEYCODE) {
       closeGalleryOverlay();
     }
   };
@@ -38,7 +36,7 @@
   };
 
   var onOverlayCloseKeydown = function () {
-    if (event.keyCode === ENTER_KEYCODE) {
+    if (event.keyCode === window.CONSTANTS.ENTER_KEYCODE) {
       closeGalleryOverlay();
     }
   };

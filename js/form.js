@@ -1,7 +1,5 @@
 'use strict';
 (function () {
-  var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
 
 // Загрузчик
 
@@ -10,7 +8,7 @@
     uploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onUploadOverlayEsc);
     uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
-    uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', onUploadOverlayClick);
+    uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', closeUploadOverlay);
     uploadOverlay.querySelector('.upload-resize-controls').removeEventListener('click', uploadResizeControls);
     uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
@@ -21,7 +19,7 @@
     uploadOverlay.classList.remove('hidden');
     document.addEventListener('keydown', onUploadOverlayEsc);
     uploadOverlay.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
-    uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', onUploadOverlayClick);
+    uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', closeUploadOverlay);
     uploadOverlay.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
     uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
     uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
@@ -29,19 +27,15 @@
   };
 
   var onUploadCancelKeydown = function () {
-    if (event.keyCode === ENTER_KEYCODE) {
+    if (event.keyCode === window.CONSTANTS.ENTER_KEYCODE) {
       closeUploadOverlay();
     }
   };
 
   var onUploadOverlayEsc = function (event) {
-    if (event.keyCode === ESC_KEYCODE && !event.target.classList.contains('upload-form-description')) {
+    if (event.keyCode === window.CONSTANTS.ESC_KEYCODE && !event.target.classList.contains('upload-form-description')) {
       closeUploadOverlay();
     }
-  };
-
-  var onUploadOverlayClick = function () {
-    closeUploadOverlay();
   };
 
   document.querySelector('#upload-file').onchange = function () {
