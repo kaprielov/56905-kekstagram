@@ -24,6 +24,45 @@
     uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
     uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
+
+    var sliderPin = document.querySelector('.upload-effect-level-pin');
+    var sliderVal = document.querySelector('.upload-effect-level-val');
+    sliderPin.addEventListener('mousedown', function (evt) {
+      evt.preventDefault();
+
+      var startCoords = {
+        x: evt.clientX,
+      };
+
+      var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+        };
+
+        var actualCoords = sliderPin.offsetLeft - shift.x;
+
+        if (actualCoords >= 0 && actualCoords <= 450) {
+          sliderPin.style.left = (actualCoords) + 'px';
+          sliderVal.style.width = (actualCoords) + 'px';
+        }
+      };
+
+      var onMouseUp = function (upEvt) {
+        upEvt.preventDefault();
+
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
   };
 
   var onUploadCancelKeydown = function () {
@@ -149,5 +188,7 @@
     if (maxTagsSymbols(hashTags)) {
       target.setCustomValidity('максимальная длина одного хэш-тега 20 символов');
     }
+
+
   };
 })();
