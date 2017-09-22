@@ -1,8 +1,6 @@
 'use strict';
 (function () {
 
-// Загрузчик
-
   var closeUploadOverlay = function () {
     var uploadOverlay = document.querySelector('.upload-overlay');
     uploadOverlay.classList.add('hidden');
@@ -44,19 +42,18 @@
     showUploadOverlay();
     document.querySelector('.upload-effect-level').classList.add('hidden');
   };
-
+// ===========Всё что касается филтров===========
   var uploadEffectControls = function (event) {
     var target = event.target;
     var image = document.querySelector('.effect-image-preview');
     var effect = 'effect-' + target.value;
-    var maxSaturation = '450px';
     if (image.classList.length > 1) {
       image.classList.remove(image.classList[1]);
     }
     image.classList.add(effect);
-    image.setAttribute('style', 'filter: none)');
-    document.querySelector('.upload-effect-level-pin').style.left = maxSaturation;
-    document.querySelector('.upload-effect-level-val').style.width = maxSaturation;
+    image.setAttribute('style', '');
+    document.querySelector('.upload-effect-level-pin').style.left = window.CONSTANTS.MAX_FILTER_SATURATION / 100 * 20 + 'px';
+    document.querySelector('.upload-effect-level-val').style.width = window.CONSTANTS.MAX_FILTER_SATURATION / 100 * 20 + 'px';
     if (image.classList.contains('effect-none')) {
       document.querySelector('.upload-effect-level').classList.add('hidden');
     } else {
@@ -83,30 +80,26 @@
 
       var actualCoords = sliderPin.offsetLeft - shift.x;
 
-      if (actualCoords >= 0 && actualCoords <= 450) {
+      if (actualCoords >= 0 && actualCoords <= window.CONSTANTS.MAX_FILTER_SATURATION) {
         sliderPin.style.left = (actualCoords) + 'px';
         sliderVal.style.width = (actualCoords) + 'px';
+        filterControl(actualCoords);
       }
 
-      filterControl(actualCoords);
     };
 
     var filterControl = function (actualCoords) {
       var image = document.querySelector('.effect-image-preview');
       if (image.classList.contains('effect-chrome')) {
-        image.setAttribute('style', 'filter: grayscale(' + (actualCoords / 450) + ')');
-      }
-      if (image.classList.contains('effect-sepia')) {
-        image.setAttribute('style', 'filter: sepia(' + (actualCoords / 450) + ')');
-      }
-      if (image.classList.contains('effect-marvin')) {
-        image.setAttribute('style', 'filter: invert(' + (actualCoords / 450) * 100 + '%)');
-      }
-      if (image.classList.contains('effect-phobos')) {
-        image.setAttribute('style', 'filter: blur(' + (actualCoords / 450) * 5 + 'px)');
-      }
-      if (image.classList.contains('effect-heat')) {
-        image.setAttribute('style', 'filter: brightness(' + (actualCoords / 450) * 3 + ')');
+        image.setAttribute('style', 'filter: grayscale(' + (actualCoords / window.CONSTANTS.MAX_FILTER_SATURATION) + ')');
+      } else if (image.classList.contains('effect-sepia')) {
+        image.setAttribute('style', 'filter: sepia(' + (actualCoords / window.CONSTANTS.MAX_FILTER_SATURATION) + ')');
+      } else if (image.classList.contains('effect-marvin')) {
+        image.setAttribute('style', 'filter: invert(' + (actualCoords / window.CONSTANTS.MAX_FILTER_SATURATION) * 100 + '%)');
+      } else if (image.classList.contains('effect-phobos')) {
+        image.setAttribute('style', 'filter: blur(' + (actualCoords / window.CONSTANTS.MAX_FILTER_SATURATION) * 5 + 'px)');
+      } else if (image.classList.contains('effect-heat')) {
+        image.setAttribute('style', 'filter: brightness(' + (actualCoords / window.CONSTANTS.MAX_FILTER_SATURATION) * 3 + ')');
       }
     };
 
@@ -118,6 +111,8 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
+
+// ===========/Всё что касается филтров===========
 
   var uploadResizeControls = function (event) {
     var target = event.target;
