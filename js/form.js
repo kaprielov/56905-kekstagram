@@ -7,7 +7,7 @@
     document.removeEventListener('keydown', onUploadOverlayEsc);
     uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
     uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', closeUploadOverlay);
-    uploadOverlay.querySelector('.upload-resize-controls').removeEventListener('click', uploadResizeControls);
+    // uploadOverlay.querySelector('.upload-resize-controls').removeEventListener('click', uploadResizeControls);
     uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
     uploadOverlay.querySelector('.upload-effect-level-pin').removeEventListener('mousedown', sliderMove);
@@ -20,7 +20,7 @@
     uploadOverlay.querySelector('.upload-form-cancel').addEventListener('keydown', onUploadCancelKeydown);
     uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', closeUploadOverlay);
     uploadOverlay.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
-    uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
+    // uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
     uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
     uploadOverlay.querySelector('.upload-effect-level-pin').addEventListener('mousedown', sliderMove);
@@ -44,8 +44,8 @@
   };
 // ===========Всё что касается филтров===========
   var uploadEffectControls = function (event) {
-    var target = event.target;
-    var image = document.querySelector('.effect-image-preview');
+    var target = event.target; // ?
+    var image = document.querySelector('.effect-image-preview'); // к колбэку
     var effect = 'effect-' + target.value;
     if (image.classList.length > 1) {
       image.classList.remove(image.classList[1]);
@@ -114,40 +114,20 @@
 
 // ===========/Всё что касается филтров===========
 
-  var uploadResizeControls = function (event) {
-    var target = event.target;
-    if (target.tagName.toLowerCase() !== 'button') {
-      return;
-    }
-    var resizeValue = event.currentTarget.querySelector('.upload-resize-controls-value');
-    var resizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
-    var image = document.querySelector('.effect-image-preview');
-    var step = 25;
-    var maxValue = 100;
+// ===========РЕСАЙЗ===========
+  var scaleElement = document.querySelector('.upload-resize-controls');
+  var pictureElement = document.querySelector('.effect-image-preview');
+  var decElement = 'upload-resize-controls-button-dec';
+  var incElement = 'upload-resize-controls-button-inc';
+  var maxValue = 100;
+  var step = 25;
 
-    if (target.classList.contains('upload-resize-controls-button-dec') && resizeValueAttribute > step) {
-      resizeDecClick(resizeValue, resizeValueAttribute, image, step, maxValue);
-    }
-    if (target.classList.contains('upload-resize-controls-button-inc') && resizeValueAttribute < maxValue) {
-      resizeIncClick(resizeValue, resizeValueAttribute, image, step, maxValue);
-    }
+  var adjustScale = function (scale) {
+    pictureElement.style.transform = 'scale(' + scale / maxValue + ')';
   };
 
-  var resizeDecClick = function (resizeValue, resizeValueAttribute, image, step, maxValue) {
-    resizeValue.setAttribute('value', resizeValueAttribute - step + '%');
-    var decResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
-    image.setAttribute('style', 'transform: scale(0.' + decResizeValueAttribute + ')');
-  };
-
-  var resizeIncClick = function (resizeValue, resizeValueAttribute, image, step, maxValue) {
-    resizeValue.setAttribute('value', resizeValueAttribute + step + '%');
-    var incResizeValueAttribute = parseInt(resizeValue.getAttribute('value'), 10);
-    if (incResizeValueAttribute === maxValue) {
-      image.setAttribute('style', 'transform: scale(1)');
-    } else {
-      image.setAttribute('style', 'transform: scale(0.' + incResizeValueAttribute + ')');
-    }
-  };
+  window.initializeScale(scaleElement, adjustScale, decElement, incElement, maxValue, step);
+// ===========/РЕСАЙЗ===========
 
   var tagsInputValid = function (event) {
     var target = event.target;
