@@ -8,7 +8,7 @@
     uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('keydown', onUploadCancelKeydown);
     uploadOverlay.querySelector('.upload-form-cancel').removeEventListener('click', closeUploadOverlay);
     // uploadOverlay.querySelector('.upload-resize-controls').removeEventListener('click', uploadResizeControls);
-    uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('change', uploadEffectControls);
+    // uploadOverlay.querySelector('.upload-effect-controls').removeEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').removeEventListener('input', tagsInputValid);
     uploadOverlay.querySelector('.upload-effect-level-pin').removeEventListener('mousedown', sliderMove);
   };
@@ -21,7 +21,7 @@
     uploadOverlay.querySelector('.upload-form-cancel').addEventListener('click', closeUploadOverlay);
     uploadOverlay.querySelector('.upload-resize-controls-value').setAttribute('value', 100 + '%');
     // uploadOverlay.querySelector('.upload-resize-controls').addEventListener('click', uploadResizeControls);
-    uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
+    // uploadOverlay.querySelector('.upload-effect-controls').addEventListener('change', uploadEffectControls);
     uploadOverlay.querySelector('.upload-form-hashtags').addEventListener('input', tagsInputValid);
     uploadOverlay.querySelector('.upload-effect-level-pin').addEventListener('mousedown', sliderMove);
   };
@@ -43,23 +43,29 @@
     document.querySelector('.upload-effect-level').classList.add('hidden');
   };
 // ===========Всё что касается филтров===========
-  var uploadEffectControls = function (event) {
-    var target = event.target; // ?
-    var image = document.querySelector('.effect-image-preview'); // к колбэку
-    var effect = 'effect-' + target.value;
-    if (image.classList.length > 1) {
-      image.classList.remove(image.classList[1]);
+
+  var initializeElement = document.querySelector('.upload-effect-controls');
+  var imageEffect = document.querySelector('.effect-image-preview');
+
+  var adjustEffect = function (effect) {
+    if (imageEffect.classList.length > 1) {
+      imageEffect.classList.remove(imageEffect.classList[1]);
     }
-    image.classList.add(effect);
-    image.setAttribute('style', '');
+    imageEffect.classList.add(effect);
+  };
+
+  var adjustSlider = function () {
+    imageEffect.setAttribute('style', '');
     document.querySelector('.upload-effect-level-pin').style.left = window.CONSTANTS.MAX_FILTER_SATURATION / 100 * 20 + 'px';
     document.querySelector('.upload-effect-level-val').style.width = window.CONSTANTS.MAX_FILTER_SATURATION / 100 * 20 + 'px';
-    if (image.classList.contains('effect-none')) {
+    if (imageEffect.classList.contains('effect-none')) {
       document.querySelector('.upload-effect-level').classList.add('hidden');
     } else {
       document.querySelector('.upload-effect-level').classList.remove('hidden');
     }
   };
+
+  window.initializeFilters(initializeElement, adjustEffect, adjustSlider);
 
   var sliderMove = function (event) {
     var sliderPin = document.querySelector('.upload-effect-level-pin');
