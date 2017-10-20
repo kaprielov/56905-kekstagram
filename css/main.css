@@ -860,3 +860,15 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
 .footer-social-item-vk {
   background-position: -84px 0;
 }
+
+.error-massage {
+  width: 100%;
+  z-index: 100;
+  margin: 0 auto;
+  text-align: center;
+  background-color: red;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 30px;
+}

@@ -8,4 +8,5 @@ window.CONSTANTS = {
   ESC_KEYCODE: 27,
   ENTER_KEYCODE: 13,
   MAX_FILTER_SATURATION: 450,
+  SERVER_URL: 'https://1510.dump.academy/kekstagram',
 };
